@@ -1,0 +1,53 @@
+html{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 100vh;
+}
+
+#main{
+    width: 900px;
+    height: 900px;
+    margin: auto;
+    display: grid;
+    grid-template-areas:"a a a"
+                        "b b b"
+                        "c c c";
+}
+
+.playerdeck{
+    width: 300px;
+    margin: 50px;
+    display: flex;
+    flex-direction: column;
+}
+
+.boardsquare{
+    width: 300px;
+    height: 300px;
+    color: grey;
+}
+
+.cornersquare{
+    border: 1px solid black;
+}
+
+.midsquare{
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.extsquare{
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.selected{
+    color: red;
+}

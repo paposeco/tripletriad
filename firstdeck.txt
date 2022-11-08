@@ -1,0 +1,5 @@
+dodo 4, 2, 3, 4
+sabotender 4, 3, 3, 3
+bomb 3, 4, 3, 3
+mandragora 4, 2, 5, 3
+coeurl 2, 5, 2, 5
