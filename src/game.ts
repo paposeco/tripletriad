@@ -29,8 +29,9 @@ export default function playerDeck(cards: string[]): Card[] {
     return decklist;
 }
 
-const blueplayerdeck = playerDeck(["cardid0", "cardid1", "cardid2", "cardid3", "cardid4"]);
+
 const redplayerdeck = playerDeck(["cardid0", "cardid1", "cardid2", "cardid3", "cardid4"]);
+const blueplayerdeck = playerDeck(["cardid0", "cardid1", "cardid2", "cardid3", "cardid4"]);
 
 export function getcardfromcollection(cardid: string): Card | undefined {
     const card = cardcollection.get(cardid);
@@ -42,24 +43,24 @@ export function getcardfromcollection(cardid: string): Card | undefined {
 
 //export { cardcollection };
 
-export const roundmoves = () => {
+export const movesperround = () => {
     let moves: string[] = [];
-    const redplayermove = function(move: string) {
+    const redplayercard = function(move: string) {
         moves.push(move);
     }
-    const redplayermovessquare = function(move: string) {
+    const redplayersquare = function(move: string) {
         moves.push(move);
     }
-    const blueplayermove = function(move: string) {
+    const blueplayercard = function(move: string) {
         moves.push(move);
     }
-    const blueplayermovesquare = function(move: string) {
+    const blueplayersquare = function(move: string) {
         moves.push(move);
     }
     const gameended = function() {
         console.log(moves);
     }
-    return { redplayermove, redplayermovessquare, blueplayermove, blueplayermovesquare, gameended }
+    return { redplayercard, redplayersquare, blueplayercard, blueplayersquare, gameended }
 };
 
 //export {redplayermove.roundmoves }

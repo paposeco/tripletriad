@@ -1,5 +1,5 @@
 import "./style.css";
-import { blueplayerdeck, redplayerdeck, roundmoves } from "./game";
+import { blueplayerdeck, redplayerdeck, movesperround } from "./game";
 import getcardfromcollection from "./game";
 
 interface Card {
@@ -20,17 +20,16 @@ interface Card {
 //display both decks
 // one player picks a card and a square
 // the player picks a card and a square
-//repeat until a player wins? 
+//repeat until a player wins?
 
-const round = function(blueplayerdeck: Card[], redplayerdeck: Card[]) {
+const keeptrackofmoves = movesperround();
+
+const round = async function(redplayerdeck: Card[], blueplayerdeck: Card[], emptysquares: number) {
   let selectedsquare: string = "";
   let cardselected: string = "";
-  let redplayercard: string = "";
-  let redplayersquare: string = "";
-  let blueplayercard: string = "";
-  let blueplayersquare: string = "";
+  let currentemptysquares = emptysquares;
   let playerblueplayed = false;
-  const keeptrackofmoves = roundmoves();
+  let redplayerplayed = false;
 
   const selectCard = function(this: HTMLElement) {
     this.classList.add("selected");
@@ -48,11 +47,9 @@ const round = function(blueplayerdeck: Card[], redplayerdeck: Card[]) {
           //round(this.dataset.card);
           cardselected = this.dataset.card;
           if (currentplayer === "redplayer") {
-            redplayercard = cardselected;
-            keeptrackofmoves.redplayermove(cardselected);
+            keeptrackofmoves.redplayercard(cardselected);
           } else if (currentplayer === "blueplayer") {
-            blueplayercard = cardselected;
-            keeptrackofmoves.blueplayermove(cardselected);
+            keeptrackofmoves.blueplayercard(cardselected);
           }
           if (cardselected !== "" && cardselected !== undefined) {
             createListenerOnBoard();
@@ -75,8 +72,8 @@ const round = function(blueplayerdeck: Card[], redplayerdeck: Card[]) {
   // display both decks, add listener later
   const displayDeck = function(playerid: string, deck: Card[]): void {
     const numberofcards = deck.length;
-    if (numberofcards > 0) {
-      const playerdiv = document.getElementById(playerid);
+    const playerdiv = document.getElementById(playerid);
+    if (numberofcards > 0 && playerdiv.children.length === 0) {
       if (playerdiv !== null) {
         for (let i = 0; i < numberofcards; i++) {
           const newdiv = document.createElement("div");
@@ -89,7 +86,6 @@ const round = function(blueplayerdeck: Card[], redplayerdeck: Card[]) {
           cardpower.textContent = `${deck[i].power[0]}, ${deck[i].power[1]}, ${deck[i].power[2]}, ${deck[i].power[3]}`;
           newdiv.appendChild(cardpower);
           newdiv.dataset.card = `${deck[i].cardID}`;
-          // newdiv.addEventListener("click", selectCard);
         }
       }
     }
@@ -104,6 +100,25 @@ const round = function(blueplayerdeck: Card[], redplayerdeck: Card[]) {
       const cardtitle = document.createElement("h3");
       this.appendChild(cardtitle);
       cardtitle.textContent = card[0].name;
+      const newdiv = document.createElement("div");
+      this.appendChild(newdiv);
+      newdiv.classList.add("boardcard");
+      const toppower = document.createElement("div");
+      newdiv.appendChild(toppower);
+      toppower.textContent = `${card[0].power[0]}`;
+      const midpowers = document.createElement("div");
+      newdiv.appendChild(midpowers);
+      midpowers.classList.add("boardcardmid");
+      const rightpower = document.createElement("div");
+      midpowers.appendChild(rightpower);
+      rightpower.textContent = `${card[0].power[1]}`;
+      const leftpower = document.createElement("div");
+      midpowers.appendChild(leftpower);
+      leftpower.textContent = `${card[0].power[2]}`;
+      const bottompower = document.createElement("div");
+      newdiv.appendChild(bottompower);
+      bottompower.textContent = `${card[0].power[3]}`;
+
     }
     // remove listeners
     const emptyboardsquares = document.querySelectorAll(".emptysquare");
@@ -111,18 +126,32 @@ const round = function(blueplayerdeck: Card[], redplayerdeck: Card[]) {
       square.removeEventListener("click", selectSquare);
     })
     this.classList.remove("emptysquare");
-    if (playerblueplayed) {
-      blueplayersquare = selectedsquare;
-      keeptrackofmoves.blueplayermovesquare(selectedsquare);
-      keeptrackofmoves.gameended();
-    }
-    if (!playerblueplayed) {
-      redplayersquare = selectedsquare;
-      keeptrackofmoves.redplayermovessquare(selectedsquare);
+
+    if (!redplayerplayed) {
+      redplayerplayed = true;
+      this.classList.add("redplayercard");
+      keeptrackofmoves.redplayersquare(selectedsquare);
+      --currentemptysquares;
+      if (currentemptysquares === 0) {
+        keeptrackofmoves.gameended();
+        return;
+      }
       deckListener("blueplayer");
+    } else {
+      keeptrackofmoves.blueplayersquare(selectedsquare);
+      --currentemptysquares;
       playerblueplayed = true;
+      this.classList.add("blueplayercard");
+    }
+
+    if (currentemptysquares > 0 && redplayerplayed && playerblueplayed) {
+      round(redplayerdeck, blueplayerdeck, currentemptysquares);
+    } else if (currentemptysquares === 0) {
+      return;
     }
   }
+
+
 
   const createListenerOnBoard = function() {
     const emptyboardsquares = document.querySelectorAll(".emptysquare");
@@ -130,31 +159,22 @@ const round = function(blueplayerdeck: Card[], redplayerdeck: Card[]) {
       square.addEventListener("click", selectSquare);
     })
   }
-
   //first
   displayDeck("redplayer", redplayerdeck);
   deckListener("redplayer");
   //second
   displayDeck("blueplayer", blueplayerdeck);
+
 }
 
 
-const fewrounds = function() {
-  console.log(round(blueplayerdeck, redplayerdeck));
-  // let n = 0;
-  // while (n < 3) {
-  //   round(blueplayerdeck, redplayerdeck);
-  //   n++;
-  // }
-}
-
-fewrounds();
+round(redplayerdeck, blueplayerdeck, 9);
 
 
 
 // //keep track of selected card
 
-
+// como fazer um while que depende de uma funcao async, e que so quero que avance quando returnar a promessa ? 
 
 
 //map com cartas e cardID

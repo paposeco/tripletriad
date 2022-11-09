@@ -31,7 +31,12 @@ body{
 .boardsquare{
     width: 300px;
     height: 300px;
-    color: grey;
+    margin: auto;
+}
+
+.boardsquare h3{
+    text-align: center;
+    margin-top: 30px;
 }
 
 .cornersquare{
@@ -49,5 +54,35 @@ body{
 }
 
 .selected{
+    color: grey;
+}
+
+.boardcard{
+    margin-top: 30px;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    text-align: center;
+}
+
+.boardcard div{
+    height: 35px;
+}
+
+.boardcardmid{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.boardcardmid div{
+    flex: 1 1 auto;
+}
+
+.redplayercard{
     color: red;
+}
+
+.blueplayercard{
+    color: blue;
 }
